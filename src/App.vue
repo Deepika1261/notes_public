@@ -1,15 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<h1>{{heading}}</h1>
+  <AddNote />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AddNote from './components/AddNote.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AddNote
+  },
+  data(){
+    return {
+      heading: "TAKE NOTES"
+      }
   }
 }
 </script>
