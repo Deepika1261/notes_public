@@ -16,20 +16,24 @@
     <ul>
     <li class="list-group-item" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
         <div class="grid-container">
-          <div class="item item1">
+          <div class="item1">
             <button v-if="selected_id!=note.id" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
-            <button v-else type="button" class="btn btn-primary" @click="submitNote()">done</button>
+            <button v-else type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
           </div>
-          <div class="item item2">
-            <input v-if="selected_id==note.id" v-model="note.note_heading" class="title-bold">
+          <div class="item2">
+            <input v-if="selected_id==note.id" v-model="update_heading" class="title-bold">
             <div v-else class="fw-bold"><b>{{note.note_heading}}</b></div>
           </div>
-          <div class="item item3">
-            <input v-if="selected_id==note.id" v-model="note.note" class="body-plain">
+          <div class="item3">
+            <input v-if="selected_id==note.id" v-model="update_note" class="body-plain">
             <div v-else>{{note.note}}</div>
           </div>  
-          <div class="item item4">
+          <div class="item4">
             <span class="badge bg-primary rounded-pill" @click="deleteNote(note)">X</span>
+          </div>
+          <div class="item5">
+            <button v-if="selected_id==note.id" type="button" class="btn btn-danger" @click="discardNote(note)">Discard</button>
+            <div v-else></div>
           </div>
         </div>
     </li>
@@ -45,7 +49,9 @@ export default{
             note_heading:"",
             id:0,
             notes:[],
-            selected_id:null
+            selected_id:null,
+            update_heading:"",
+            update_note:""
         }
     },
     methods:{
@@ -71,9 +77,17 @@ export default{
         },
         editNote: function(the_note){
             this.selected_id=the_note.id;
+            this.update_heading=the_note.note_heading;
+            this.update_note=the_note.note;
           },
-        submitNote(){
+        submitNote(note){
+            note.note_heading=this.update_heading
+            note.note=this.update_note
             this.selected_id=null
+        },
+        discardNote(note){
+            this.selected_id=null
+            console.log(note)
         }
     }
 
@@ -84,11 +98,12 @@ export default{
         .item2 { grid-area: title; }
         .item3 { grid-area: body; }
         .item4 { grid-area: delete; }
+        .item5 { grid-area: discard; }
         .grid-container {
           display: grid;
           grid-template-areas:
             'update title title title delete '
-            'update body body body delete';
+            'discard body body body delete';
           grid-template-columns: 20% 57% 20%;
           gap: 3px;
           padding: 5px;
