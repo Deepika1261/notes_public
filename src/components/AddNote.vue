@@ -17,8 +17,8 @@
     <li class="list-group-item" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
         <div class="grid-container">
           <div class="item1">
-            <button v-if="selected_id!=note.id" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
-            <button v-else type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
+            <button v-if="selected_id!=note.id && selected_note" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
+            <button v-if="selected_id==note.id" type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
           </div>
           <div class="item2">
             <input v-if="selected_id==note.id" v-model="update_heading" class="title-bold">
@@ -51,7 +51,8 @@ export default{
             notes:[],
             selected_id:null,
             update_heading:"",
-            update_note:""
+            update_note:"",
+            selected_note:true
         }
     },
     methods:{
@@ -78,16 +79,22 @@ export default{
         editNote: function(the_note){
             this.selected_id=the_note.id;
             this.update_heading=the_note.note_heading;
+            this.selected_note=false;
             this.update_note=the_note.note;
+            console.log(this.selected_note)
           },
         submitNote(note){
             note.note_heading=this.update_heading
             note.note=this.update_note
+            this.selected_note=true;
             this.selected_id=null
+            console.log(this.selected_note)
         },
         discardNote(note){
             this.selected_id=null
+            this.selected_note=true;
             console.log(note)
+            console.log(this.selected_note)
         }
     }
 
