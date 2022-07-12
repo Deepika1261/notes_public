@@ -6,23 +6,31 @@
         <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" v-model="note_heading">
     </div>
     <div class="input-group">
-        <span class="input-group-text">Add Note</span>
+        <span class="input-group-text">Note body</span>
         <textarea class="form-control" aria-label="With textarea" v-model="note"></textarea>
     </div>
     <button type="button" v-on:click=addNote()>{{ button_text }}</button>
   </div>
   <hr />
-  <div>
+  <div class="col-md-6">
     <ul>
-    <li class="list-group-item d-flex justify-content-between align-items-start" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
-        <div class="ms-2 me-auto">
-            <button v-if="!note.edit" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
-            <button v-else type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
-            <input v-if="note.edit" v-model="note.note_heading" class="fw-bold">
-            <div v-else class="fw-bold">{{note.note_heading}}</div>
-            <input v-if="note.edit" v-model="note.note" class="fw-bold">
+    <li class="list-group-item" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
+        <div class="grid-container">
+          <div class="item item1">
+            <button v-if="selected_id!=note.id" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
+            <button v-else type="button" class="btn btn-primary" @click="submitNote()">done</button>
+          </div>
+          <div class="item item2">
+            <input v-if="selected_id==note.id" v-model="note.note_heading" class="title-bold">
+            <div v-else class="fw-bold"><b>{{note.note_heading}}</b></div>
+          </div>
+          <div class="item item3">
+            <input v-if="selected_id==note.id" v-model="note.note" class="body-plain">
             <div v-else>{{note.note}}</div>
-            <span class="badge bg-primary rounded-pill" @click="deleteNote">X</span>
+          </div>  
+          <div class="item item4">
+            <span class="badge bg-primary rounded-pill" @click="deleteNote(note)">X</span>
+          </div>
         </div>
     </li>
     </ul>
@@ -37,38 +45,60 @@ export default{
             note_heading:"",
             id:0,
             notes:[],
-            edit:false
+            selected_id:null
         }
     },
     methods:{
         reset(){
             this.note = '',
             this.note_heading = ''
+            this.id=this.id+1
         },
         addNote(){
             let my_note={
                 note_heading:this.note_heading,
                 note:this.note,
-                id: this.id + 1,
+                id: this.id,
                 edit:false
             }
             this.notes.push(my_note)
-            console.log(this.$refs.name)
-            console.log(my_note);
             this.reset()
         },
         deleteNote(the_note){
             const idx = this.notes.indexOf(the_note)
+            console.log(idx)
             this.notes.splice(idx,1)
         },
         editNote: function(the_note){
-            the_note.edit=true;
+            this.selected_id=the_note.id;
           },
-        submitNote(the_note){
-            console.log(the_note)
-            the_note.edit=false
+        submitNote(){
+            this.selected_id=null
         }
     }
 
 }
 </script>
+<style scoped>
+        .item1 { grid-area: update; }
+        .item2 { grid-area: title; }
+        .item3 { grid-area: body; }
+        .item4 { grid-area: delete; }
+        .grid-container {
+          display: grid;
+          grid-template-areas:
+            'update title title title delete '
+            'update body body body delete';
+          grid-template-columns: 20% 57% 20%;
+          gap: 3px;
+          padding: 5px;
+        }
+    
+        .item{
+            margin: 0%;
+            padding:0%;
+        }
+        .title-bold .body-plain{
+            align-self: flex-start;
+        }
+</style>
