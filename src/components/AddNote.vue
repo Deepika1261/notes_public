@@ -3,7 +3,7 @@
     <label>Add your notes here</label>
     <div class="input-group mb-3">
         <span class="input-group-text" id="inputGroup-sizing-default">Heading</span>
-        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" v-model="note_heading">
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" v-model="note_heading" ref="name">
     </div>
     <div class="input-group">
         <span class="input-group-text">Add Note</span>
@@ -14,12 +14,12 @@
   <hr />
   <div>
     <ul style="margin-top: 1.5rem;">
-    <li class="list-group-item d-flex justify-content-between align-items-start" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
+    <li class="list-group-item d-flex justify-content-between align-items-start" v-for="note in notes" :key="note.id" :note="note" v-bind:class="{doneClass : note.id}">
         <div class="ms-2 me-auto">
-        <div class="fw-bold">{{note.note_heading}}</div>
-        {{note.note}}
-        </div>
+        <div class="fw-bold" contenteditable="">{{note.note_heading}}</div>
+        <p class="" contenteditable="true" v-on:keydown.enter="editNote($event, note)" v-on:blur="editNote($event, note)" v-bind:class="{doneClass : note.id}"> {{note.note}} </p>
         <span class="badge bg-primary rounded-pill" @click="deleteNote">X</span>
+    </div>
     </li>
     </ul>
   </div>
@@ -47,13 +47,19 @@ export default{
                 id: this.id + 1
             }
             this.notes.push(my_note)
+            console.log(this.$refs.name)
             console.log(my_note);
             this.reset()
         },
         deleteNote(the_note){
             const idx = this.notes.indexOf(the_note)
             this.notes.splice(idx,1)
-        }
+        },
+        editNote: function(event, note){
+            event.preventDefault();
+            note.note = event.target.innerText;
+            event.target.blur();
+          }
     }
 
 }
