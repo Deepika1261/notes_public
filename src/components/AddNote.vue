@@ -1,9 +1,9 @@
 <template>
-  <div class="note-add">
+  <div class="col-md-6">
     <label>Add your notes here</label>
-    <div class="input-group mb-3">
+    <div class="input-group">
         <span class="input-group-text" id="inputGroup-sizing-default">Heading</span>
-        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" v-model="note_heading" ref="name">
+        <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" v-model="note_heading">
     </div>
     <div class="input-group">
         <span class="input-group-text">Add Note</span>
@@ -13,13 +13,17 @@
   </div>
   <hr />
   <div>
-    <ul style="margin-top: 1.5rem;">
-    <li class="list-group-item d-flex justify-content-between align-items-start" v-for="note in notes" :key="note.id" :note="note" v-bind:class="{doneClass : note.id}">
+    <ul>
+    <li class="list-group-item d-flex justify-content-between align-items-start" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
         <div class="ms-2 me-auto">
-        <div class="fw-bold" contenteditable="">{{note.note_heading}}</div>
-        <p class="" contenteditable="true" v-on:keydown.enter="editNote($event, note)" v-on:blur="editNote($event, note)" v-bind:class="{doneClass : note.id}"> {{note.note}} </p>
-        <span class="badge bg-primary rounded-pill" @click="deleteNote">X</span>
-    </div>
+            <button v-if="!note.edit" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
+            <button v-else type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
+            <input v-if="note.edit" v-model="note.note_heading" class="fw-bold">
+            <div v-else class="fw-bold">{{note.note_heading}}</div>
+            <input v-if="note.edit" v-model="note.note" class="fw-bold">
+            <div v-else>{{note.note}}</div>
+            <span class="badge bg-primary rounded-pill" @click="deleteNote">X</span>
+        </div>
     </li>
     </ul>
   </div>
@@ -32,7 +36,8 @@ export default{
             note:"",
             note_heading:"",
             id:0,
-            notes:[]
+            notes:[],
+            edit:false
         }
     },
     methods:{
@@ -44,7 +49,8 @@ export default{
             let my_note={
                 note_heading:this.note_heading,
                 note:this.note,
-                id: this.id + 1
+                id: this.id + 1,
+                edit:false
             }
             this.notes.push(my_note)
             console.log(this.$refs.name)
@@ -55,11 +61,13 @@ export default{
             const idx = this.notes.indexOf(the_note)
             this.notes.splice(idx,1)
         },
-        editNote: function(event, note){
-            event.preventDefault();
-            note.note = event.target.innerText;
-            event.target.blur();
-          }
+        editNote: function(the_note){
+            the_note.edit=true;
+          },
+        submitNote(the_note){
+            console.log(the_note)
+            the_note.edit=false
+        }
     }
 
 }
