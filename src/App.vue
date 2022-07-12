@@ -1,15 +1,17 @@
 <template>
-<h1>{{heading}}</h1>
-  <AddNote />
+<div background="\assets\back_note.jpg">
+  <h1>{{heading}}</h1>
+  <Notes />
+</div>  
 </template>
 
 <script>
-import AddNote from './components/AddNote.vue'
+import Notes from './components/Notes.vue'
 
 export default {
   name: 'App',
   components: {
-    AddNote
+    Notes
   },
   data(){
     return {
