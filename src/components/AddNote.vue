@@ -72,7 +72,7 @@ export default{
             this.notes.splice(idx,1)
         },
         editNote: function(the_note){
-            this.selected_note=the_note;
+            this.selected_note = JSON.parse(JSON.stringify(the_note));
             console.log(this.selected_note)
           },
         submitNote(note){
@@ -86,7 +86,7 @@ export default{
           console.log(this.selected_note)
           console.log(note)
           console.log(this.notes)
-          this.selected_note.id=null;
+          this.selected_note=null;
         }
     }
 
