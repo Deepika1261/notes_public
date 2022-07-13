@@ -17,22 +17,22 @@
     <li class="list-group-item" v-for="note in notes" :key="note.id" v-bind:class="{doneClass : note.id}">
         <div class="grid-container">
           <div class="item1">
-            <button v-if="selected_id!=note.id && selected_note" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
-            <button v-if="selected_id==note.id" type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
+            <button v-if="selected_note==null" type="button" class="btn btn-primary" @click="editNote(note)">Update</button>
+            <button v-if="selected_note!=null && selected_note.id==note.id" type="button" class="btn btn-primary" @click="submitNote(note)">done</button>
           </div>
           <div class="item2">
-            <input v-if="selected_id==note.id" v-model="update_heading" class="title-bold">
+            <input v-if="selected_note!=null && selected_note.id==note.id" v-model="selected_note.note_heading" class="title-bold">
             <div v-else class="fw-bold"><b>{{note.note_heading}}</b></div>
           </div>
           <div class="item3">
-            <input v-if="selected_id==note.id" v-model="update_note" class="body-plain">
+            <input v-if="selected_note!=null && selected_note.id==note.id" v-model="selected_note.note" class="body-plain">
             <div v-else>{{note.note}}</div>
           </div>  
           <div class="item4">
             <span class="badge bg-primary rounded-pill" @click="deleteNote(note)">X</span>
           </div>
           <div class="item5">
-            <button v-if="selected_id==note.id" type="button" class="btn btn-danger" @click="discardNote(note)">Discard</button>
+            <button v-if="selected_note!=null && selected_note.id==note.id" type="button" class="btn btn-danger" @click="discardNote(note)">Discard</button>
             <div v-else></div>
           </div>
         </div>
@@ -49,10 +49,7 @@ export default{
             note_heading:"",
             id:0,
             notes:[],
-            selected_id:null,
-            update_heading:"",
-            update_note:"",
-            selected_note:true
+            selected_note:null
         }
     },
     methods:{
@@ -66,35 +63,30 @@ export default{
                 note_heading:this.note_heading,
                 note:this.note,
                 id: this.id,
-                edit:false
             }
             this.notes.push(my_note)
             this.reset()
         },
         deleteNote(the_note){
             const idx = this.notes.indexOf(the_note)
-            console.log(idx)
             this.notes.splice(idx,1)
         },
         editNote: function(the_note){
-            this.selected_id=the_note.id;
-            this.update_heading=the_note.note_heading;
-            this.selected_note=false;
-            this.update_note=the_note.note;
+            this.selected_note=the_note;
             console.log(this.selected_note)
           },
         submitNote(note){
-            note.note_heading=this.update_heading
-            note.note=this.update_note
-            this.selected_note=true;
-            this.selected_id=null
-            console.log(this.selected_note)
+          console.log(note);
+          console.log(this.selected_note);
+          note.note_heading=this.selected_note.note_heading;
+          note.note=this.selected_note.note;
+          this.selected_note=null;
         },
         discardNote(note){
-            this.selected_id=null
-            this.selected_note=true;
-            console.log(note)
-            console.log(this.selected_note)
+          console.log(this.selected_note)
+          console.log(note)
+          console.log(this.notes)
+          this.selected_note.id=null;
         }
     }
 
